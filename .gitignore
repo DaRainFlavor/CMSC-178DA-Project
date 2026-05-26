@@ -1,0 +1,23 @@
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Streamlit Config & Cache
+.streamlit/
+
+# OS/IDE specific files
+.antigravitycli/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+*.png
+*.jpg
+*.jpeg
+*.pdf

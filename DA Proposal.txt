@@ -1,0 +1,67 @@
+Group Name: Inverters
+
+
+
+
+Investigating Labor Market Polarization in the Philippines: Employment Trends Across Skill Levels (2016–2025)
+
+
+Background and Rationale
+Higher education in the Philippines is widely regarded as a pathway to stable and well paying employment. Many Filipino students pursue college degrees with the expectation that it will provide access to better career opportunities and upward mobility.
+However, recent discussions in economics and labor studies suggest a possible shift in the structure of the labor market. Some perspectives describe the emergence of labor market polarization, sometimes illustrated as an “hourglass” pattern, where employment growth is concentrated in high skill and low skill occupations, while opportunities in middle skill roles grow more slowly or decline in relative share (Behind Asia, 2026).
+Roles in administration, clerical work, and certain technical occupations have historically served as entry points into the middle class. Changes in technology, automation, and broader economic conditions may be influencing the availability and stability of these roles.
+This study aims to examine whether there is empirical evidence of such labor market polarization in the Philippines. Rather than assuming a structural decline, the research will analyze employment trends to identify patterns that may be relevant to the career pathways of fresh graduates.
+Research Question
+Has the Philippine labor market polarized into an hourglass structure from 2016 to 2025?
+
+
+Data Sourcing
+This study will use publicly available government data to ensure reliability and transparency.
+Primary Source: Philippine Statistics Authority OpenSTAT database
+Dataset: Labor Force Survey, Number of Employed Persons by Major Occupation Group using the 2012 PSOC Code, covering April 2016 to 2025
+This dataset provides a nine year time series of employment by occupation group, enabling the analysis of long term labor market trends.
+
+Proposed Methodology
+The study will utilize multiple distinct analytical methods to investigate labor market polarization and identify resilient occupations.
+
+Data Preparation & Skill Tier Classification
+Occupation groups will be categorized into three skill-based tiers:
+* High Skill: Managers, Professionals, Technicians and Associate Professionals
+* Middle Skill: Clerical Support Workers, Craft and Related Trades Workers, Plant and Machine Operators and Assemblers
+* Low Skill: Service and Sales Workers, Skilled Agricultural Forestry and Fishery Workers, Elementary Occupations
+
+Analytical Components:
+
+1. Time-Series Descriptive & Shift-Share Analysis
+* Compute and visualize the percentage share of total employment for each skill tier over time.
+* Calculate year-on-year growth rates and changes in relative employment share.
+* Investigate historical LFS classification anomalies (e.g., changes in the "Managers" category definition) to ensure data consistency.
+
+2. Trend Regression & Projection Modeling
+* Fit regression trend models (e.g., linear, log-linear, polynomial) on historical employment shares.
+* Project employment shares for each tier to 2030 to evaluate if polarization is expected to accelerate.
+* Compare model goodness-of-fit metrics to select the most appropriate trend projections.
+
+3. Cluster Analysis for Occupation Resilience
+* Apply K-Means or hierarchical clustering to group the individual major occupation categories.
+* Features for clustering will include average growth rate, coefficient of variation (volatility), and post-COVID recovery rate.
+* Identify clusters of "highly resilient," "stable," and "declining" occupations to highlight career opportunities for graduates.
+
+Expected Output and Target Audience
+Target Audience
+* University career counselors
+* Undergraduate and graduating students
+
+Output
+An interactive dashboard will be developed using Streamlit.
+
+Key Features
+* A time series visualization showing trends in high skill, middle skill, and low skill employment from 2016 to 2025
+* Option to view data in absolute values or percentage share
+* Interactive drill down for the middle skill category, highlighting:
+   * Occupations with the highest employment levels
+   * Occupations with stable trends
+   * Occupations showing growth or decline
+
+
+References
