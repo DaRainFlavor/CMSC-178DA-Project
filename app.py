@@ -25,7 +25,7 @@ logo_base64 = load_image_base64(logo_path)
 # ─── Page Config ──────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="PH Labor Market Dashboard",
-    page_icon="",
+    page_icon=logo_path,
     layout="wide",
     initial_sidebar_state="expanded",
 )
