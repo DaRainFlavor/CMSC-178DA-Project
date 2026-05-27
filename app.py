@@ -1010,7 +1010,7 @@ if nav == "overview":
         verdict_title = "NO HOURGLASS STRUCTURE FOUND"
         verdict_color = "#3b82f6"  # Blue
         verdict_bg = "#eff6ff"
-        verdict_desc = "Standard figures show middle-skill growth (+4.8 pp) driven by LFS definition shifts. Toggle to 'Adjusted' to see the corrected economic signal."
+        verdict_desc = "Standard figures show middle-skill growth (+4.8 pp) driven by LFS definition shifts."
         high_status = f"{dh:+.1f} pp · Administrative Drop"
         high_desc = "Managers fell due to LFS reclassification."
         mid_status = f"{dm:+.1f} pp · Artificially Inflated"
