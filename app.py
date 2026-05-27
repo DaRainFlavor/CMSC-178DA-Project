@@ -63,7 +63,8 @@ html, body,
 [data-testid="stMain"] {
     background: #f0f3fa !important;
     font-family: 'Inter', sans-serif !important;
-    overflow: auto !important;
+    overflow: hidden !important;
+    height: 100vh !important;
 }
 
 /* ── Enforce Italics ── */
@@ -92,17 +93,23 @@ em, i {
     margin-top: 0 !important;
 }
 
+/* ── Collapse empty style container blocks ── */
+[data-testid="element-container"]:has(style) {
+    display: none !important;
+}
+
 /* ── Main block ── */
 .stMainBlockContainer,
 [data-testid="stMainBlockContainer"],
 .block-container {
-    padding-top: 0.8rem !important;
-    padding-bottom: 1.4rem !important;
+    padding-top: 0.5rem !important;
+    padding-bottom: 1.8rem !important;
     padding-left: 1.6rem !important;
     padding-right: 1.6rem !important;
     max-width: 1200px !important;
     margin: 0 auto !important;
-    overflow: visible !important;
+    height: 100vh !important;
+    overflow: hidden !important;
 }
 
 /* ── Sidebar ── */
@@ -159,7 +166,14 @@ em, i {
 [data-testid="stSidebar"] .stRadio div[role="radiogroup"] label {
     font-size: 0.8rem !important;
     color: #cbd5e1 !important;
-    padding-left: 0.5rem !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    cursor: pointer !important;
+}
+[data-testid="stSidebar"] .stRadio div[role="radiogroup"] label > div:first-child {
+    margin-right: 0.5rem !important;
+    margin-left: 0 !important;
 }
 [data-testid="stSidebar"] .stRadio div[role="radiogroup"] {
     gap: 0.3rem !important;
@@ -849,7 +863,7 @@ with st.sidebar:
         use_container_width=True
     )
 
-st.markdown("<div style='margin-top: 1.1rem;'></div>", unsafe_allow_html=True)
+
 
 # ─── Persistent Title Question ────────────────────────────────────────────────
 st.markdown("""
@@ -927,7 +941,7 @@ with k4:
     </div>
     """, unsafe_allow_html=True)
 
-st.markdown("<div style='margin-top: 1.1rem;'></div>", unsafe_allow_html=True)
+st.markdown("<div style='margin-top: 0.7rem;'></div>", unsafe_allow_html=True)
 
 # ─── Navigation Tabs (Compact & Full Width) ────────────────────────────────────
 t1, t2, t3, t4 = st.columns(4, gap="small")
@@ -1279,7 +1293,7 @@ elif nav == "proj":
                     line=dict(color=clr, width=2.5, dash="dot"),
                     showlegend=False,
                 ))
-            lay_p = plotly_theme(h=315, mb=12)
+            lay_p = plotly_theme(h=308, mb=12)
             lay_p["xaxis"]["range"] = [2015, 2031]
             lay_p["yaxis"]["title"] = "Share (%)"
             fig_p.update_layout(**lay_p)
@@ -1322,9 +1336,9 @@ elif nav == "proj":
             line-height: 1.2 !important;
         }}
         .st-key-btn_{active_proj_tab} button {{
-            background: #ff4b4b !important;
+            background: #162040 !important;
             color: #ffffff !important;
-            border-color: #ff4b4b !important;
+            border-color: #162040 !important;
         }}
         
         /* Align card bottoms by making columns stretch using flexbox */
@@ -1368,7 +1382,7 @@ elif nav == "proj":
         }}
         .st-key-card_projections {{
             margin-top: -0.8rem !important;
-            padding: 1.1rem 1.2rem 1.1rem 1.2rem !important;
+            padding: 0.95rem 1.2rem 0.95rem 1.2rem !important;
         }}
         .st-key-card_fit,
         .st-key-card_yoy {{
@@ -1376,13 +1390,13 @@ elif nav == "proj":
         }}
         
         .st-key-card_fit {{
-            padding: 0.95rem 1.2rem 1.1rem 1.2rem !important;
+            padding: 0.9rem 1.2rem 0.9rem 1.2rem !important;
         }}
         .r2-row {{
-            margin-bottom: 0.7rem !important;
+            margin-bottom: 0.65rem !important;
         }}
         .proj-row {{
-            padding: 0.4rem 0 !important;
+            padding: 0.37rem 0 !important;
         }}
         </style>
         """, unsafe_allow_html=True)
@@ -1420,8 +1434,8 @@ elif nav == "proj":
                     """, unsafe_allow_html=True)
 
                 st.markdown("""
-                <div style="margin-top:0.6rem;padding-top:0.5rem;border-top:1px solid #f1f5f9;">
-                  <div style="font-size:0.73rem;font-weight:700;color:#475569;margin-bottom:0.4rem;">
+                <div style="margin-top:0.55rem;padding-top:0.4rem;border-top:1px solid #f1f5f9;">
+                  <div style="font-size:0.73rem;font-weight:700;color:#475569;margin-bottom:0.3rem;">
                     Projected Shares · 2030
                   </div>
                 """, unsafe_allow_html=True)
@@ -1505,7 +1519,7 @@ elif nav == "clust":
         "Declining":   "#ef4444",
     }
 
-    col_l, col_r = st.columns([3, 2], gap="medium")
+    col_l, col_r = st.columns([3, 2], gap="small")
 
     with col_l:
         p1, p2 = st.columns(2, gap="small")
@@ -1543,11 +1557,10 @@ elif nav == "clust":
             line-height: 1.2 !important;
         }}
         .st-key-btn_{'kmeans' if active_clust_tab == 'scatter' else 'cagr'} button {{
-            background: #ff4b4b !important;
+            background: #162040 !important;
             color: #ffffff !important;
-            border-color: #ff4b4b !important;
+            border-color: #162040 !important;
         }}
-        
         /* Align card bottoms by making columns stretch using flexbox */
         div[data-testid="stColumn"]:has(.st-key-card_kmeans) > div,
         div[data-testid="stColumn"]:has(.st-key-card_cagr) > div,
@@ -1588,18 +1601,23 @@ elif nav == "clust":
             flex-grow: 1 !important;
             height: 100% !important;
         }}
-        
         .st-key-card_kmeans,
         .st-key-card_cagr {{
             margin-top: -0.65rem !important;
-            padding-bottom: 1.1rem !important;
-            margin-bottom: 1.2rem !important;
+            padding-bottom: 0.8rem !important;
+            margin-bottom: 0.8rem !important;
         }}
         
         .st-key-card_detail {{
             margin-top: -0.8rem !important;
-            padding: 1.1rem 1.2rem 1.1rem 1.2rem !important;
-            margin-bottom: 1.2rem !important;
+            padding: 0.9rem 1.2rem 0.9rem 1.2rem !important;
+            margin-bottom: 0.8rem !important;
+        }}
+        .st-key-card_cagr {{
+            height: 342px !important;
+            min-height: 342px !important;
+            max-height: 342px !important;
+            overflow-y: auto !important;
         }}
         </style>
         """, unsafe_allow_html=True)
@@ -1626,7 +1644,7 @@ elif nav == "clust":
                 fig_cl.update_traces(
                     marker=dict(line=dict(width=2, color="#ffffff"), sizemin=10, opacity=0.9),
                 )
-                lay_cl = plotly_theme(h=285, mb=32)
+                lay_cl = plotly_theme(h=260, mb=32)
                 fig_cl.update_layout(**lay_cl)
                 st.plotly_chart(fig_cl, width='stretch', config=dict(displayModeBar=False))
 
@@ -1641,7 +1659,7 @@ elif nav == "clust":
                 bar_cols   = [cmap.get(c, NAVY) for c in df_sorted["Category"]]
                 short_occs = [o.split(" and ")[0][:24] for o in df_sorted["Occupation"]]
                 n_bars     = len(short_occs)
-                bar_h      = max(300, n_bars * 34)
+                bar_h      = max(240, n_bars * 24)
                 fig_bar = go.Figure(go.Bar(
                     x=df_sorted["CAGR %"],
                     y=short_occs,
@@ -1654,9 +1672,7 @@ elif nav == "clust":
                 lay_bar["yaxis"]["tickfont"] = dict(size=10, color="#475569")
                 lay_bar["showlegend"] = False
                 fig_bar.update_layout(**lay_bar)
-                st.markdown('<div style="max-height:295px;overflow-y:auto;border-radius:8px;">', unsafe_allow_html=True)
                 st.plotly_chart(fig_bar, width='stretch', config=dict(displayModeBar=False))
-                st.markdown('</div>', unsafe_allow_html=True)
 
     with col_r:
         with st.container(key="card_detail"):
@@ -1681,7 +1697,7 @@ elif nav == "clust":
                 """, unsafe_allow_html=True)
 
             detail_html = f"""
-            <div style="max-height: 250px; overflow-y: auto; padding-right: 0.2rem; margin-top: 0.2rem;">
+            <div style="max-height: 272px; overflow-y: auto; padding-right: 0.2rem; margin-top: 0.2rem;">
             """
             for _, row in subset.iterrows():
                 short    = row["Occupation"][:36]
