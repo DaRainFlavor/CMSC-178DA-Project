@@ -6,6 +6,10 @@ import plotly.express as px
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 import base64
+import os
+
+# Get path of current file's directory
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def load_image_base64(path):
     try:
@@ -14,7 +18,8 @@ def load_image_base64(path):
     except Exception:
         return ""
 
-logo_base64 = load_image_base64("assets/inverters_logo.png")
+logo_path = os.path.join(CURRENT_DIR, "assets", "inverters_logo.png")
+logo_base64 = load_image_base64(logo_path)
 
 
 # ─── Page Config ──────────────────────────────────────────────────────────────
@@ -709,7 +714,8 @@ def plotly_theme(h=300, ml=40, mr=16, mt=8, mb=8):
 # ─── Data loading ──────────────────────────────────────────────────────────────
 @st.cache_data
 def load_data():
-    df = pd.read_csv("1B3GEMP4.csv", sep=";", skiprows=2)
+    csv_path = os.path.join(CURRENT_DIR, "1B3GEMP4.csv")
+    df = pd.read_csv(csv_path, sep=";", skiprows=2)
     df = df.replace(".", np.nan)
     for col in df.columns[2:]:
         df[col] = pd.to_numeric(df[col], errors="coerce")
