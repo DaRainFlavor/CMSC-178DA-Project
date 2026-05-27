@@ -30,10 +30,18 @@ if "proj_tab" not in st.session_state:
 if "clust_tab" not in st.session_state:
     st.session_state.clust_tab = "scatter"
 
+def update_proj_model():
+    if "proj_model_dropdown" in st.session_state:
+        st.session_state.proj_model = "linear" if st.session_state.proj_model_dropdown == "Linear" else "quadratic"
+
+def update_cluster_filter():
+    if "cluster_inspect_dropdown" in st.session_state:
+        st.session_state.cluster_filter = st.session_state.cluster_inspect_dropdown
+
 # ─── CSS ───────────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300..800;1,300..800&display=swap');
 
 /* ── Reset ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -45,6 +53,11 @@ html, body,
     background: #f0f3fa !important;
     font-family: 'Inter', sans-serif !important;
     overflow: auto !important;
+}
+
+/* ── Enforce Italics ── */
+em, i {
+    font-style: italic !important;
 }
 
 /* ── Hide Streamlit chrome and remove top offsets ── */
@@ -87,22 +100,187 @@ html, body,
     border-right: none !important;
     min-width: 210px !important;
     max-width: 210px !important;
-    overflow-y: auto !important;
+    overflow: visible !important;
+    z-index: 99999 !important;
+    position: relative !important;
+    height: 100vh !important;
+}
+[data-testid="stSidebarContent"] {
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: visible !important;
+    padding-bottom: 75px !important;
 }
 [data-testid="stSidebarHeader"],
 .stSidebarHeader {
+    display: none !important;
     background-color: transparent !important;
-    padding-top: 0.8rem !important;
-    padding-bottom: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    height: 0 !important;
+    min-height: 0 !important;
 }
 [data-testid="stSidebar"] .block-container,
-[data-testid="stSidebarContent"],
 [data-testid="stSidebarUserContent"],
-[data-testid="stSidebar"] [data-testid="stVerticalBlock"] {
+[data-testid="stSidebar"] [data-testid="stVerticalBlock"],
+[data-testid="stSidebar"] [data-testid="stVerticalBlockBorderWrapper"] {
     padding: 0 !important;
     padding-top: 0 !important;
     margin-top: 0 !important;
-    overflow-y: auto !important;
+    overflow: visible !important;
+}
+[data-testid="stSidebar"] [data-testid="stVerticalBlock"] {
+    gap: 0.1rem !important;
+}
+
+/* Sidebar widgets padding */
+[data-testid="stSidebar"] .stRadio,
+[data-testid="stSidebar"] .stDownloadButton {
+    padding-left: 0.8rem !important;
+    padding-right: 0.8rem !important;
+}
+[data-testid="stSidebar"] .stRadio {
+    margin-bottom: 0.2rem !important;
+}
+
+/* Radio options styling to prevent truncation and make them look clean */
+[data-testid="stSidebar"] .stRadio div[role="radiogroup"] label {
+    font-size: 0.8rem !important;
+    color: #cbd5e1 !important;
+    padding-left: 0.5rem !important;
+}
+[data-testid="stSidebar"] .stRadio div[role="radiogroup"] {
+    gap: 0.3rem !important;
+}
+[data-testid="stSidebar"] [data-testid="stWidgetLabel"] p {
+    font-size: 0.68rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1.2px !important;
+    color: #93c5fd !important;
+}
+
+/* Sidebar section label */
+.sb-section-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #93c5fd;
+    padding: 0 0.8rem;
+    margin-bottom: 0.3rem;
+    margin-top: 0.8rem;
+    display: block;
+}
+
+/* Sidebar hover-tooltip rows */
+.sb-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.22rem 0.8rem;
+    cursor: default;
+    transition: background 0.12s;
+    z-index: 1;
+}
+.sb-row:hover {
+    background: rgba(255,255,255,0.05);
+    z-index: 100;
+}
+.sb-row-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    color: #e2e8f0;
+    font-weight: 500;
+}
+.sb-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.sb-info-icon {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.3);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: default;
+    position: relative;
+}
+/* Tooltip appears to the RIGHT of the info icon */
+.sb-tooltip {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: calc(100% + 10px);
+    transform: translateY(-50%);
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 7px;
+    padding: 0.5rem 0.7rem;
+    font-size: 0.71rem;
+    color: #cbd5e1;
+    line-height: 1.45;
+    z-index: 9999;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+    pointer-events: none;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    white-space: normal;
+    width: 200px;
+}
+.sb-row:hover .sb-tooltip {
+    display: block;
+}
+
+/* Sidebar divider */
+.sb-divider {
+    height: 1px;
+    background: #1e2e55;
+    margin: 0.7rem 0.8rem 0;
+}
+
+/* Fixed export button at bottom of sidebar */
+[data-testid="stSidebar"] .stDownloadButton {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 210px !important;
+    background: #162040 !important;
+    padding: 0.75rem 0.8rem 1.1rem 0.8rem !important;
+    border-top: 1px solid #1e2e55 !important;
+    z-index: 999999 !important;
+}
+
+/* Sidebar download button */
+[data-testid="stSidebar"] .stDownloadButton button {
+    background: rgba(255,255,255,0.07) !important;
+    border: 1px solid rgba(255,255,255,0.15) !important;
+    color: #e2e8f0 !important;
+    border-radius: 8px !important;
+    font-size: 0.74rem !important;
+    font-weight: 600 !important;
+    padding: 0.35rem 0.6rem !important;
+    width: 100% !important;
+    text-align: center !important;
+    transition: all 0.15s !important;
+    box-shadow: none !important;
+    letter-spacing: 0.2px !important;
+    margin-top: 0.1rem !important;
+}
+[data-testid="stSidebar"] .stDownloadButton button:hover {
+    background: rgba(255,255,255,0.13) !important;
+    border-color: rgba(255,255,255,0.3) !important;
+    color: #ffffff !important;
 }
 
 /* ── Nav buttons in sidebar ── */
@@ -115,7 +293,7 @@ html, body,
     color: #7a8db0 !important;
     font-size: 0.85rem !important;
     font-weight: 500 !important;
-    padding: 0.65rem 1.5rem !important;
+    padding: 0.65rem 0.8rem !important;
     font-family: 'Inter', sans-serif !important;
     cursor: pointer !important;
     transition: all 0.15s !important;
@@ -129,32 +307,34 @@ html, body,
 /* Sidebar radio (filters) */
 [data-testid="stSidebar"] .stRadio > label {
     color: #93c5fd !important;
-    font-size: 0.82rem !important;
+    font-size: 0.68rem !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
     letter-spacing: 1.2px !important;
-    text-align: center !important;
+    text-align: left !important;
     display: block !important;
     width: 100% !important;
+    margin-bottom: 0.25rem !important;
+    margin-top: 0.2rem !important;
 }
 [data-testid="stSidebar"] .stRadio > label div p,
 [data-testid="stSidebar"] .stSelectbox > label div p {
-    text-align: center !important;
+    text-align: left !important;
 }
 [data-testid="stSidebar"] .stRadio > div {
-    gap: 0.15rem !important;
+    gap: 0.1rem !important;
 }
 [data-testid="stSidebar"] .stRadio label,
 [data-testid="stSidebar"] .stRadio label p,
 [data-testid="stSidebar"] .stRadio label span,
 [data-testid="stSidebar"] .stRadio div[data-testid="stMarkdownContainer"] p {
     color: #ffffff !important;
-    font-size: 0.88rem !important;
+    font-size: 0.82rem !important;
     font-weight: 400 !important;
     text-align: left !important;
 }
 [data-testid="stSidebar"] .stRadio label {
-    padding: 0.2rem 0 !important;
+    padding: 0.1rem 0 !important;
     display: flex !important;
     justify-content: flex-start !important;
     align-items: center !important;
@@ -166,7 +346,7 @@ html, body,
     font-weight: 700 !important;
     text-transform: uppercase !important;
     letter-spacing: 1.2px !important;
-    text-align: center !important;
+    text-align: left !important;
     display: block !important;
     width: 100% !important;
 }
@@ -183,6 +363,30 @@ html, body,
     font-size: 0.88rem !important;
     text-align: left !important;
     width: 100% !important;
+}
+
+/* ── Disable typing in all selectboxes ── */
+.stSelectbox input {
+    pointer-events: none !important;
+    caret-color: transparent !important;
+    user-select: none !important;
+}
+.stSelectbox,
+.stSelectbox *,
+.stSelectbox > div,
+.stSelectbox > div > div,
+.stSelectbox [data-baseweb="select"],
+.stSelectbox [data-baseweb="select"] * {
+    cursor: default !important;
+}
+.stSelectbox [data-baseweb="select"] > div:focus,
+.stSelectbox [data-baseweb="select"] > div:focus-within,
+.stSelectbox [data-baseweb="select"] > div:focus-visible,
+.stSelectbox [data-baseweb="select"] > div[aria-expanded="true"],
+.stSelectbox [data-baseweb="select"] > div {
+    border-color: rgba(255,255,255,0.15) !important;
+    box-shadow: none !important;
+    outline: none !important;
 }
 
 /* ── KPI cards ── */
@@ -532,8 +736,8 @@ def add_tiers(df):
 with st.sidebar:
     # Logo + Brand
     st.markdown("""
-    <div style="padding:0.6rem 1.5rem 0.8rem 1.5rem;">
-      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.4rem;">
+    <div style="padding:1.2rem 0.8rem 1.0rem 0.8rem;">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;">
         <div style="width:42px;height:42px;border-radius:50%;background:#ffffff18;
                     display:flex;align-items:center;justify-content:center;flex-shrink:0;">
           <div style="width:28px;height:28px;border-radius:50%;background:#ffffff;
@@ -543,14 +747,14 @@ with st.sidebar:
         </div>
         <div>
           <div style="font-size:1.1rem;font-weight:700;color:#ffffff;line-height:1.2;">Inverters</div>
-          <div style="font-size:0.78rem;color:#cbd5e1;">CMSC 178DA Capstone</div>
+          <div style="font-size:0.72rem;color:#cbd5e1;white-space:nowrap;">CMSC 178DA Capstone</div>
         </div>
       </div>
     </div>
     """, unsafe_allow_html=True)
 
     st.markdown("""
-    <div style="padding:0 1.5rem; margin-top: -1rem;">
+    <div style="padding:0 0.8rem; margin-top: 0.1rem;">
       <div style="height:1px;background:#1e2e55;margin-bottom:1.2rem;"></div>
     </div>
     """, unsafe_allow_html=True)
@@ -563,36 +767,13 @@ with st.sidebar:
     )
     st.session_state.data_mode = "raw" if "Raw" in data_mode_opt else "adj"
 
-    st.markdown("<div style='margin-top:0.8rem;'></div>", unsafe_allow_html=True)
 
-    chart_unit_opt = st.radio(
-        "Chart Units",
-        ["Percentage Share", "Absolute (Thousands)"],
-        index=0 if st.session_state.chart_unit == "share" else 1,
-    )
-    st.session_state.chart_unit = "share" if "Percentage" in chart_unit_opt else "abs"
 
-    if st.session_state.nav == "proj":
-        st.markdown("<div style='margin-top:0.8rem;'></div>", unsafe_allow_html=True)
-        pm = st.radio(
-            "Projection Model",
-            ["Linear (1st Degree)", "Quadratic (2nd Degree)"],
-            index=0 if st.session_state.proj_model == "linear" else 1,
-        )
-        st.session_state.proj_model = "linear" if "Linear" in pm else "quadratic"
 
-    if st.session_state.nav == "clust":
-        st.markdown("<div style='margin-top:0.8rem;'></div>", unsafe_allow_html=True)
-        cf = st.selectbox(
-            "Inspect Cluster",
-            ["High Growth", "Stable", "Declining"],
-            index=["High Growth", "Stable", "Declining"].index(st.session_state.cluster_filter),
-        )
-        st.session_state.cluster_filter = cf
 
-    pass
 
-# ─── Active dataset ────────────────────────────────────────────────────────────
+
+# ─── Active dataset & KPI variables ────────────────────────────────────────────
 adf = add_tiers(df_raw if st.session_state.data_mode == "raw" else df_adjusted)
 
 h16 = adf.loc[adf["Year"] == 2016, "High Share"].values[0]
@@ -608,6 +789,72 @@ dm = m25 - m16
 dl = l25 - l16
 dtot = (total_25 - total_16) / 1000
 nav = st.session_state.nav
+
+# ─── Sidebar Info & Export ─────────────────────────────────────────────────────
+with st.sidebar:
+    data_state_label = "Raw PSA figures" if st.session_state.data_mode == "raw" else "Smoothed — adjusted for LFS definition change (2019+)"
+    st.markdown(f"""
+    <div class="sb-divider"></div>
+
+    <span class="sb-section-label">Skill Tier Classification</span>
+
+    <div class="sb-row">
+      <div class="sb-row-left">
+        <div class="sb-dot" style="background:#ffffff;"></div>
+        <span>High Skill</span>
+      </div>
+      <div class="sb-info-icon">
+        <span style="font-family:Georgia,serif;font-style:italic;font-size:0.72rem;color:#94a3b8;line-height:1;user-select:none;">i</span>
+        <div class="sb-tooltip"><strong>High Skill</strong><br>Managers, Professionals, Technicians &amp; Associate Professionals</div>
+      </div>
+    </div>
+
+    <div class="sb-row">
+      <div class="sb-row-left">
+        <div class="sb-dot" style="background:{C_MID};"></div>
+        <span>Middle Skill</span>
+      </div>
+      <div class="sb-info-icon">
+        <span style="font-family:Georgia,serif;font-style:italic;font-size:0.72rem;color:#94a3b8;line-height:1;user-select:none;">i</span>
+        <div class="sb-tooltip"><strong>Middle Skill</strong><br>Clerical Support Workers, Craft &amp; Related Trades, Plant &amp; Machine Operators</div>
+      </div>
+    </div>
+
+    <div class="sb-row">
+      <div class="sb-row-left">
+        <div class="sb-dot" style="background:{C_LOW};"></div>
+        <span>Low Skill</span>
+      </div>
+      <div class="sb-info-icon">
+        <span style="font-family:Georgia,serif;font-style:italic;font-size:0.72rem;color:#94a3b8;line-height:1;user-select:none;">i</span>
+        <div class="sb-tooltip"><strong>Low Skill</strong><br>Service &amp; Sales Workers, Agricultural &amp; Fishery Workers, Elementary Occupations</div>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <span class="sb-section-label">Dataset</span>
+
+    <div class="sb-row">
+      <div class="sb-row-left"><span>Source</span></div>
+      <div class="sb-info-icon">
+        <span style="font-family:Georgia,serif;font-style:italic;font-size:0.72rem;color:#94a3b8;line-height:1;user-select:none;">i</span>
+        <div class="sb-tooltip">Philippine Statistics Authority OpenSTAT — Labor Force Survey (LFS)</div>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+    """, unsafe_allow_html=True)
+
+    st.download_button(
+        label="Export Active Dataset (CSV)",
+        data=adf.to_csv(index=False),
+        file_name=f"ph_labor_market_{st.session_state.data_mode}.csv",
+        mime="text/csv",
+        use_container_width=True
+    )
+
+st.markdown("<div style='margin-top: 1.1rem;'></div>", unsafe_allow_html=True)
 
 # ─── Persistent Title Question ────────────────────────────────────────────────
 st.markdown("""
@@ -883,10 +1130,21 @@ elif nav == "trends":
 
     with col_l:
         with st.container(key="card_dynamics"):
-            st.markdown("""
-            <div class="chart-card-title">Employment Share Dynamics</div>
-            <div class="chart-card-sub">High / Middle / Low Skill  ·  2016 – 2025</div>
-            """, unsafe_allow_html=True)
+            hdr_l, hdr_r = st.columns([3, 1])
+            with hdr_l:
+                st.markdown("""
+                <div class="chart-card-title">Employment Share Dynamics</div>
+                <div class="chart-card-sub">High / Middle / Low Skill  ·  2016 – 2025</div>
+                """, unsafe_allow_html=True)
+            with hdr_r:
+                chart_unit_opt = st.selectbox(
+                    "Units",
+                    ["% Share", "Absolute (K)"],
+                    index=0 if st.session_state.chart_unit == "share" else 1,
+                    key="chart_unit_dropdown",
+                    label_visibility="collapsed",
+                )
+                st.session_state.chart_unit = "share" if "Share" in chart_unit_opt else "abs"
 
             if st.session_state.chart_unit == "share":
                 fig = go.Figure()
@@ -983,12 +1241,23 @@ elif nav == "proj":
     col_l, col_r = st.columns([3, 2], gap="small")
 
     with col_l:
-        model_label = "Linear" if st.session_state.proj_model == "linear" else "Quadratic"
         with st.container(key="card_projections"):
-            st.markdown(f"""
-            <div class="chart-card-title">Employment Share Projections — 2030 Outlook</div>
-            <div class="chart-card-sub">{model_label} regression  ·  Dashed = Forecast  ·  Dots = Actual data</div>
-            """, unsafe_allow_html=True)
+            hdr_l, hdr_r = st.columns([3, 1])
+            with hdr_r:
+                st.selectbox(
+                    "Projection Model",
+                    ["Linear", "Quadratic"],
+                    index=0 if st.session_state.proj_model == "linear" else 1,
+                    key="proj_model_dropdown",
+                    on_change=update_proj_model,
+                    label_visibility="collapsed",
+                )
+            model_label = "Linear" if st.session_state.proj_model == "linear" else "Quadratic"
+            with hdr_l:
+                st.markdown(f"""
+                <div class="chart-card-title">Employment Share Projections — 2030 Outlook</div>
+                <div class="chart-card-sub">{model_label} regression  ·  Dashed = Forecast  ·  Dots = Actual data</div>
+                """, unsafe_allow_html=True)
 
             colors_p = {"High Skill": C_HIGH, "Middle Skill": C_MID, "Low Skill": C_LOW}
             fig_p = go.Figure()
@@ -1395,21 +1664,30 @@ elif nav == "clust":
                 st.markdown('</div>', unsafe_allow_html=True)
 
     with col_r:
-        cf    = st.session_state.cluster_filter
-        clr   = cat_color.get(cf, NAVY)
-        subset = df_cl[df_cl["Category"] == cf].copy()
-
         with st.container(key="card_detail"):
+            hdr_l, hdr_r = st.columns([3, 2])
+            with hdr_r:
+                cf = st.selectbox(
+                    "Inspect Cluster",
+                    ["High Growth", "Stable", "Declining"],
+                    index=["High Growth", "Stable", "Declining"].index(st.session_state.cluster_filter),
+                    key="cluster_inspect_dropdown",
+                    on_change=update_cluster_filter,
+                    label_visibility="collapsed",
+                )
+                st.session_state.cluster_filter = cf
+
+            clr   = cat_color.get(cf, NAVY)
+            subset = df_cl[df_cl["Category"] == cf].copy()
+
+            with hdr_l:
+                st.markdown(f"""
+                <div class="chart-card-title">Cluster Detail</div>
+                """, unsafe_allow_html=True)
+
             detail_html = f"""
-            <div class="chart-card-title">Cluster Detail</div>
-            <div class="cluster-badge"
-                 style="color:{clr};background:{hex_rgba(clr,0.08)};border-color:{hex_rgba(clr,0.25)};margin-bottom:0.4rem;">
-              <span style="width:7px;height:7px;border-radius:50%;background:{clr};display:inline-block;flex-shrink:0;"></span>
-              {cf}
-            </div>
             <div style="max-height: 250px; overflow-y: auto; padding-right: 0.2rem; margin-top: 0.2rem;">
             """
-            
             for _, row in subset.iterrows():
                 short    = row["Occupation"][:36]
                 cagr_v   = row["CAGR %"]
