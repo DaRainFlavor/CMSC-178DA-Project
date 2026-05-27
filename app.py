@@ -5,6 +5,17 @@ import plotly.graph_objects as go
 import plotly.express as px
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
+import base64
+
+def load_image_base64(path):
+    try:
+        with open(path, "rb") as f:
+            return base64.b64encode(f.read()).decode()
+    except Exception:
+        return ""
+
+logo_base64 = load_image_base64("assets/inverters_logo.png")
+
 
 # ─── Page Config ──────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -169,8 +180,8 @@ em, i {
     letter-spacing: 1.2px;
     color: #93c5fd;
     padding: 0 0.8rem;
-    margin-bottom: 0.3rem;
-    margin-top: 0.8rem;
+    margin-bottom: 0.1rem;
+    margin-top: 0.6rem;
     display: block;
 }
 
@@ -735,27 +746,24 @@ def add_tiers(df):
 # ─── Sidebar ──────────────────────────────────────────────────────────────────
 with st.sidebar:
     # Logo + Brand
-    st.markdown("""
-    <div style="padding:1.2rem 0.8rem 1.0rem 0.8rem;">
-      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;">
-        <div style="width:42px;height:42px;border-radius:50%;background:#ffffff18;
-                    display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <div style="width:28px;height:28px;border-radius:50%;background:#ffffff;
-                      display:flex;align-items:center;justify-content:center;">
-            <span style="font-size:0.75rem;font-weight:800;color:#162040;">PH</span>
-          </div>
+    st.markdown(f"""
+    <div style="padding:1.2rem 0.8rem 1.0rem 0.8rem; display:flex; justify-content:center;">
+      <div style="display:flex;align-items:center;gap:1.0rem;margin-bottom:0.4rem;">
+        <div style="width:42px;height:42px;border-radius:50%;background:#ffffff;
+                    display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;">
+          <img src="data:image/png;base64,{logo_base64}" style="width:100%;height:100%;object-fit:contain;padding:4px;" />
         </div>
         <div>
           <div style="font-size:1.1rem;font-weight:700;color:#ffffff;line-height:1.2;">Inverters</div>
-          <div style="font-size:0.72rem;color:#cbd5e1;white-space:nowrap;">CMSC 178DA Capstone</div>
+          <div style="font-size:0.72rem;color:#cbd5e1;white-space:nowrap;">CMSC 178DA</div>
         </div>
       </div>
     </div>
     """, unsafe_allow_html=True)
 
     st.markdown("""
-    <div style="padding:0 0.8rem; margin-top: 0.1rem;">
-      <div style="height:1px;background:#1e2e55;margin-bottom:1.2rem;"></div>
+    <div style="padding:0 0 4.0rem 0; margin-top: 0.1rem;">
+      <div style="height:1px;background:#1e2e55;"></div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -766,11 +774,6 @@ with st.sidebar:
         index=0 if st.session_state.data_mode == "raw" else 1,
     )
     st.session_state.data_mode = "raw" if "Raw" in data_mode_opt else "adj"
-
-
-
-
-
 
 
 # ─── Active dataset & KPI variables ────────────────────────────────────────────
@@ -792,12 +795,9 @@ nav = st.session_state.nav
 
 # ─── Sidebar Info & Export ─────────────────────────────────────────────────────
 with st.sidebar:
-    data_state_label = "Raw PSA figures" if st.session_state.data_mode == "raw" else "Smoothed — adjusted for LFS definition change (2019+)"
     st.markdown(f"""
     <div class="sb-divider"></div>
-
     <span class="sb-section-label">Skill Tier Classification</span>
-
     <div class="sb-row">
       <div class="sb-row-left">
         <div class="sb-dot" style="background:#ffffff;"></div>
@@ -808,7 +808,6 @@ with st.sidebar:
         <div class="sb-tooltip"><strong>High Skill</strong><br>Managers, Professionals, Technicians &amp; Associate Professionals</div>
       </div>
     </div>
-
     <div class="sb-row">
       <div class="sb-row-left">
         <div class="sb-dot" style="background:{C_MID};"></div>
@@ -819,7 +818,6 @@ with st.sidebar:
         <div class="sb-tooltip"><strong>Middle Skill</strong><br>Clerical Support Workers, Craft &amp; Related Trades, Plant &amp; Machine Operators</div>
       </div>
     </div>
-
     <div class="sb-row">
       <div class="sb-row-left">
         <div class="sb-dot" style="background:{C_LOW};"></div>
@@ -832,9 +830,7 @@ with st.sidebar:
     </div>
 
     <div class="sb-divider"></div>
-
     <span class="sb-section-label">Dataset</span>
-
     <div class="sb-row">
       <div class="sb-row-left"><span>Source</span></div>
       <div class="sb-info-icon">
@@ -842,7 +838,6 @@ with st.sidebar:
         <div class="sb-tooltip">Philippine Statistics Authority OpenSTAT — Labor Force Survey (LFS)</div>
       </div>
     </div>
-
     <div class="sb-divider"></div>
     """, unsafe_allow_html=True)
 
