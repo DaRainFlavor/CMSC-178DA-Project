@@ -1001,16 +1001,16 @@ st.markdown(f"""
 if nav == "overview":
     # Finding calculation
     if st.session_state.data_mode == "raw":
-        finding = "<strong>No clear hourglass found.</strong> Middle-skill roles expanded (+4.8 pp) alongside low-skill growth — driven partly by an administrative Managers reclassification. Toggle to <em>Adjusted</em> for the economic signal."
+        finding = f"<strong>No clear hourglass found.</strong> Middle-skill roles expanded ({dm:+.1f} pp) alongside low-skill growth ({dl:+.1f} pp) — driven partly by an administrative Managers reclassification. Toggle to <em>Adjusted</em> for the economic signal."
     else:
-        finding = "<strong>Partial polarization detected.</strong> High-skill share stayed stable; low-skill services expanded fastest (+3.6 pp); middle-skill grew modestly (+2.1 pp). The hourglass pattern is present but not pronounced."
+        finding = f"<strong>Partial polarization detected.</strong> High-skill share stayed stable ({dh:+.1f} pp); middle-skill roles expanded the fastest ({dm:+.1f} pp); low-skill roles contracted ({dl:+.1f} pp) after smoothing. The hourglass pattern is present but not pronounced."
 
     # Dynamic details based on raw vs adjusted data model
     if st.session_state.data_mode == "raw":
         verdict_title = "NO HOURGLASS STRUCTURE FOUND"
         verdict_color = "#3b82f6"  # Blue
         verdict_bg = "#eff6ff"
-        verdict_desc = "Standard figures show middle-skill growth (+4.8 pp) driven by LFS definition shifts."
+        verdict_desc = f"Standard figures show middle-skill growth ({dm:+.1f} pp) driven by LFS definition shifts."
         high_status = f"{dh:+.1f} pp · Administrative Drop"
         high_desc = "Managers fell due to LFS reclassification."
         mid_status = f"{dm:+.1f} pp · Artificially Inflated"
@@ -1021,13 +1021,13 @@ if nav == "overview":
         verdict_title = "PARTIAL POLARIZATION DETECTED"
         verdict_color = "#f5a623"  # Amber
         verdict_bg = "#fff8ed"
-        verdict_desc = "Low-skill roles expanded fastest (+3.6 pp) while high-skill stayed flat. Middle-skill grew modestly (+2.1 pp) instead of hollowing out."
+        verdict_desc = f"Middle-skill roles grew the most ({dm:+.1f} pp), high-skill stayed stable ({dh:+.1f} pp), and low-skill roles contracted ({dl:+.1f} pp) after correcting the manager reclassification."
         high_status = f"{dh:+.1f} pp · Stable"
         high_desc = "High-skill share held steady around 13-14%."
         mid_status = f"{dm:+.1f} pp · Resilient"
         mid_desc = "Grew modestly; no structural collapse detected."
-        low_status = f"{dl:+.1f} pp · Growth Driver"
-        low_desc = "Low-skill service sectors expanded the fastest."
+        low_status = f"{dl:+.1f} pp · Contraction"
+        low_desc = "Low-skill service sectors saw share reductions after smoothing."
 
     # Summary container (Full Width Card Design)
     with st.container(key="card_summary_text"):
