@@ -20,7 +20,7 @@ Follow these steps to clone the repository, set up a virtual environment, and la
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/savvyavie/CMSC-178DA-Project.git
+git clone https://github.com/DaRainFlavor/CMSC-178DA-Project.git
 cd CMSC-178DA-Project
 ```
 
